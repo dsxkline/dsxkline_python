@@ -4,6 +4,8 @@ pydsxkline是一个有趣的python包，一行代码即可显示K线图，主要
 
 pydsxkline基于dsxkline进行封装,具体的接口可以查看官网 http://www.dsxkline.com
 
+![PyPI](https://img.shields.io/pypi/v/pydsxkline?color=0&label=pypi%20pydsxkline) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydsxkline?color=0)
+
 # 预览
 
 <img width="600" alt="WechatIMG548" src="https://user-images.githubusercontent.com/105279193/211977193-cae8cb52-fcb6-4d95-b812-c07b157d91e7.png">
