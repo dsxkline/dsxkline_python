@@ -29,12 +29,14 @@ DsxKline.show("sh000001","上证指数")
 ``` python
 DsxKline.show("sh000001","上证指数",CycleType.t)
 ```
+<img width="600" alt="WechatIMG549" src="https://user-images.githubusercontent.com/105279193/212050752-c76aabbd-b909-470f-bad4-d68f5c2a2cb1.png">
 
 ### 五日图
 ``` python
 # 五日图
 DsxKline.show("sh000001","上证指数",CycleType.t5)
 ```
+<img width="600" alt="WechatIMG550" src="https://user-images.githubusercontent.com/105279193/212050872-06e0bf47-8920-43e4-a70d-24013908bd2c.png">
 
 ### 日K
 ``` python
