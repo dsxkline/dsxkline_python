@@ -1,0 +1,18 @@
+[project]
+name = "pydsxkline"
+version = "1.1.0"
+authors = [
+  { name="fangyunsm", email="934476300@qq.com" },
+]
+description = "一个好玩的股票量化K线图显示工具"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/dsxkline/dsxkline_python"
+"Bug Tracker" = "https://github.com/dsxkline/dsxkline_python/issues"
