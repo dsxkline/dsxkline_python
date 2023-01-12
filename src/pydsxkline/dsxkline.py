@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -13,7 +12,9 @@ import datetime
 import sys
 import webview
 import json
-import qqhq as hq
+from pydsxkline import qqhq as hq
+from pydsxkline.dsxkline_html import dsxkline_html
+from pydsxkline.dsxkline_js import dsxkline_js
 import os
 
 class CycleType : 
@@ -195,10 +196,6 @@ class DsxKline:
     window = None
     # 是否启用内置行情数据接口
     enable_data_api = True
-    # 本地html
-    index_path = os.path.abspath(__file__).replace('dsxkline.py','')+"index.html"
-    # 本地js
-    dsx_kline_js_path = os.path.abspath(__file__).replace('dsxkline.py','')+"dsx.kline_v_1_1_0.js"
     # 名次
     name = ""
     # 证券代码
@@ -306,17 +303,10 @@ class DsxKline:
     def load_html(self):
         print("load_html")
         # 加载 HTML 代码
-        dsxkline_index = open(self.index_path,"r",encoding='utf-8')
-        content = dsxkline_index.read()
-        dsxkline_index.close()
-
-        dsxkline_js = open(self.dsx_kline_js_path,"r",encoding='utf-8')
-        jscontent = dsxkline_js.read()
-        dsxkline_js.close()
-
+        content = dsxkline_html
+        jscontent = dsxkline_js
         content = content.replace('{jscontent}',jscontent)
         content = content.replace("-background-color-",self.background_color())
-
         self.window.load_html(content)
 
     def load(self):

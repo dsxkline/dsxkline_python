@@ -5,6 +5,8 @@ src/__init__.py
 src/pydsxkline/__init__.py
 src/pydsxkline/demo.py
 src/pydsxkline/dsxkline.py
+src/pydsxkline/dsxkline_html.py
+src/pydsxkline/dsxkline_js.py
 src/pydsxkline/qqhq.py
 src/pydsxkline.egg-info/PKG-INFO
 src/pydsxkline.egg-info/SOURCES.txt

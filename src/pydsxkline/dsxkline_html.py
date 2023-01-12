@@ -1,3 +1,4 @@
+dsxkline_html = r"""
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,10 +15,8 @@
   </head>
   <body>
        <div id="kline" style="display: block;"></div>
-       
   </body>
 </html>
-
 <script>
-    
 </script>
+"""
