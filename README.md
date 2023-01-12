@@ -22,11 +22,115 @@ pip install pydsxkline
 ``` python
 from pydsxkline.dsxkline import DsxKline
 DsxKline.show("sh000001","上证指数")
-# DsxKline.show("sh000001","上证指数",CycleType.t5)
-# DsxKline.show("sh000001","上证指数",CycleType.day,FqType.qfq,theme=DsxThemeName.white,sides["VOL","MACD","KDJ","RSI","WR","CCI","PSY","BIAS"],height=1600)
-# DsxKline.show("sh000001","上证指数",CycleType.week,on_crossing=on_crossing)
-# DsxKline.show("sh000001","上证指数",CycleType.month)
-# DsxKline.show("sh000001","上证指数",CycleType.m1)
+```
+### 分时图
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.t)
+```
+
+### 五日图
+``` python
+# 五日图
+DsxKline.show("sh000001","上证指数",CycleType.t5)
+```
+
+### 日K
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.day)
+```
+
+### 周K
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.week)
 ```
 
 
+### 月K
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.month)
+```
+
+### 年K
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.year)
+```
+
+### 1分钟k线
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.m1)
+```
+
+### 自定义
+``` python
+DsxKline.show("sh000001","上证指数",CycleType.day,FqType.qfq,theme=DsxThemeName.white,sides["VOL","MACD","KDJ","RSI","WR","CCI","PSY","BIAS"],height=1600)
+```
+
+### 加载本地数据
+``` python
+# 日线数据
+datas = [
+    "20210915,3651.16,3677.53,3638.32,3656.22,474970001.00,60423154.41",
+    "20210916,3664.84,3677.92,3606.73,3607.09,546741474.00,67395534.04",
+    "20210917,3595.27,3620.96,3569.27,3613.97,516850210.00,62883439.43",
+    "20210922,3563.21,3629.45,3560.50,3628.49,472296053.00,55987472.96",
+    "20210923,3651.27,3670.95,3632.28,3642.22,534995486.00,63321892.91",
+    "20210924,3637.87,3651.43,3607.79,3613.07,507304772.00,60678860.91",
+    ...
+]
+
+DsxKline.show("sh000001","上证指数",datas=datas,enable_data_api=False,cycle=CycleType.day)
+```
+
+### 参数属性
+- 详细的文档可参考：http://www.dsxkline.com
+``` python
+DsxKline:
+    # 名称
+    name = ""
+    # 证券代码
+    symbol = ""
+    # 昨日收盘价
+    last_close = 0
+    # 宽
+    width = 800
+    # 高
+    height = 600
+    # 图表类型
+    chartType = ChartType.timeSharing
+    # 周期类型
+    cycle = CycleType.t
+    # 复权类型
+    fq = FqType.default
+    # 主题
+    theme = DsxThemeName.dark
+    # 主图指标
+    main = ["MA"]
+    # 副图指标
+    sides = ["VOL","MACD","RSI"]
+    # 数据
+    datas = []
+    # 每页请求数据大小
+    page_size = 320
+    # 页码
+    page = 1
+    # 十字线回调
+    on_crossing = None
+    # 更新完成
+    update_complate = None
+    # 副图高度
+    side_height = 80
+    # 底部间距
+    padding_bottom = 10
+    # 蜡烛图类型 默认空心
+    candel_type = CandleType.hollow
+    # 缩放类型 默认固定左边进行缩放
+    zoom_lock_type = ZoomLockType.right
+    # 是否显示提示面板，十字线移动的时候显示的详情面板
+    is_show_kline_tip_pannel = True
+    # 自动适配，k线图根据父窗口的大小自动调整
+    autosize = False
+    # 是否启用内置行情数据接口，当使用本地数据的时候请关闭设置为 false
+    enable_data_api = True
+    # debug
+    debug = False
+```
