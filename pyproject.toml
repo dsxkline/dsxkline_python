@@ -1,10 +1,10 @@
 [project]
 name = "pydsxkline"
-version = "1.1.0"
+version = "1.1.1"
 authors = [
   { name="fangyunsm", email="934476300@qq.com" },
 ]
-description = "一个好玩的股票量化K线图显示工具"
+description = "pydsxkline是一个有趣的python包，一行代码即可显示K线图，主要应用于股票金融量化领域，当您想要把股票数据图形化的时候，可以试试这个小工具，希望能帮到有需要的朋友。"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
