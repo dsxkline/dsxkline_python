@@ -7,5 +7,12 @@ setup.py
 pydsxkline.egg-info/PKG-INFO
 pydsxkline.egg-info/SOURCES.txt
 pydsxkline.egg-info/dependency_links.txt
+pydsxkline.egg-info/not-zip-safe
 pydsxkline.egg-info/requires.txt
 pydsxkline.egg-info/top_level.txt
+src/pydsxkline/__init__.py
+src/pydsxkline/demo.py
+src/pydsxkline/dsxkline.py
+src/pydsxkline/dsxkline_html.py
+src/pydsxkline/dsxkline_js.py
+src/pydsxkline/qqhq.py

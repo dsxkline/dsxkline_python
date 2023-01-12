@@ -443,7 +443,7 @@ class DsxKline:
         js = js.replace("{paddingBottom}",self.padding_bottom.__str__())
         js = js.replace("{autoSize}",self.autosize.__str__().lower())
         js = js.replace("{debug}", self.debug.__str__().lower())
-        print(js)
+        # print(js)
         return js
     
     def finish_loading(self):

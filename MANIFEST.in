@@ -1,1 +1,1 @@
-recursive-include dsxkline *.js *.py
+recursive-include src/pydsxkline *.js *.py
