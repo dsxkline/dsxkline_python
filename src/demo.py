@@ -13,14 +13,14 @@ if __name__ == "__main__":
 
     def draw_event():
         return [
-        DsxKline.draw_cycle_with_date("20230313","买","red","#ffffff"),
-        DsxKline.draw_cycle_with_date("20221129","卖","green","#ffffff",12.99),
+        DsxKline.draw_cycle_with_date("20230313","卖","green","#ffffff",3268.7),
+        DsxKline.draw_cycle_with_date("20221230","买","red","#ffffff"),
         DsxKline.draw_cycle_with_date("202303241104","买","red","#ffffff")
         ]
 
     header = """
         
-        <h1 style="color:#fff;text-align:center;font-size:20px;line-height:50px;border-bottom:1px solid #191b28">这是一个大师兄线图 pydsxkline </h1>
+        <h1 style="color:#fff;text-align:center;font-size:20px;line-height:50px;border-bottom:1px solid #191b28"> pydsxkline </h1>
         <ul class="mycss">
             <li><span>累计收益率：</span><b>30.6%</b></li>
             <li><span>年化收益率：</span><b>80.6%</b></li>
