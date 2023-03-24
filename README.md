@@ -135,7 +135,7 @@ header = """
 DsxKline.show("sh000001","上证指数",CycleType.day,header_html=header,header_height=160)
 ```
 
-<img width="800" alt="image" src="https://user-images.githubusercontent.com/105279193/227477956-1a5ebc76-12de-4937-883a-0131dcc01c86.png">
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/105279193/227477956-1a5ebc76-12de-4937-883a-0131dcc01c86.png">
 
 
 ### 参数属性
