@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pydsxkline
-Version: 1.1.3
+Version: 1.2.0
 Summary: pydsxkline是一个有趣的python包，一行代码即可显示K线图，主要应用于股票金融量化领域，当您想要把股票数据图形化的时候，可以试试这个小工具，希望能帮到有需要的朋友。
 Home-page: https://github.com/dsxkline/dsxkline_python
 Author: fangyunsm

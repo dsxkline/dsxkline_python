@@ -15,7 +15,6 @@ import json
 from pydsxkline import qqhq as hq
 from pydsxkline.dsxkline_html import dsxkline_html
 from pydsxkline.dsxkline_js import dsxkline_js
-import os
 
 class CycleType : 
     t = 0       # 分时图
@@ -189,90 +188,78 @@ class Api:
     def update_complate(self):
         if hasattr(self.dsxkline.update_complate,"__call__"):
             self.dsxkline.update_complate()
+
         # print("update complate...")
+    
+    def draw_event(self,kline):
+        # print("draw event...")
+        if hasattr(self.dsxkline.draw_event,"__call__"):
+            self.dsxkline.draw_event(self.dsxkline)
 
     def error(self):
         raise Exception('This is a Python exception')
 
 
 class DsxKline:
-    # webview 窗口
-    window = None
-    # 是否启用内置行情数据接口，当使用本地数据的时候请关闭设置为 false
-    enable_data_api = True
-    # 名次
-    name = ""
-    # 证券代码
-    symbol = ""
-    # 昨日收盘价
-    last_close = 0
-    # 宽
-    width = 800
-    # 高
-    height = 600
-    # 图表类型
-    chartType = ChartType.timeSharing
-    # 周期类型
-    cycle = CycleType.t
-    # 复权类型
-    fq = FqType.default
-    # 主题
-    theme = DsxThemeName.dark
-    # 主图指标
-    main = ["MA"]
-    # 副图指标
-    sides = ["VOL","MACD","RSI"]
-    # 数据
-    datas = []
-    # 每页请求数据大小
-    page_size = 320
-    # 页码
-    page = 1
-    # 十字线回调
-    on_crossing = None
-    # 更新完成
-    update_complate = None
-    # 副图高度
-    side_height = 80
-    # 底部间距
-    padding_bottom = 10
-    # 蜡烛图类型 默认空心
-    candel_type = CandleType.hollow
-    # 缩放类型 默认固定左边进行缩放
-    zoom_lock_type = ZoomLockType.right
-    # 是否显示提示面板 十字线移动的时候显示的详情面板
-    is_show_kline_tip_pannel = True
-    # 自动适配，k线图根据父窗口的大小自动调整
-    autosize = False
-    # debug
-    debug = False
-
+    
     def __init__(self,symbol,name=None,cycle = CycleType.t,fq=FqType.default,page_size=320,last_close=0,datas=[],chartType=ChartType.timeSharing,theme=DsxThemeName.dark,main=["MA"],sides=["VOL","MACD","RSI"]
-    ,enable_data_api=True,height=600,width=800,on_crossing:callable=None,update_complate:callable=None,side_height=80,padding_bottom=10,candel_type=CandleType.hollow,
-    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False):
+    ,enable_data_api=True,height=600,width=800,on_crossing=None,update_complate=None,side_height=80,padding_bottom=10,candel_type=CandleType.hollow,
+    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False,draw_event:list=None,header_html=None,header_height=0):
+        # webview 窗口
+        self.window = None
+        # k线数据
         self.datas = datas
+        # 名称
         self.name = name
+        # 股票代码
         self.symbol = symbol
+        # 主题
         self.theme = theme
+        # 主图指标
         self.main = main
+        # 幅图指标
         self.sides = sides
+        # 昨日收盘价 分时图需要
         self.last_close = last_close
+        # 图表类型
         self.chartType = chartType
+        # 是否启用内置行情数据接口，当使用本地数据的时候请关闭设置为 false
         self.enable_data_api = enable_data_api
+        # 周期
         self.cycle = cycle
+        # 复权类型
         self.fq = fq
+        # 每页数据大小
         self.page_size = page_size
+        # 高度
         self.height = height
+        # 宽度
         self.width = width
+        # 十字线滑动
         self.on_crossing = on_crossing
+        # 更新完成回调
         self.update_complate = update_complate
+        # 幅图高度
         self.side_height = side_height
+        # 底部内边距
         self.padding_bottom = padding_bottom
+        # 蜡烛图类型 实心空心
         self.candel_type = candel_type
+        # 缩放类型
         self.zoom_lock_type = zoom_lock_type
+        # 是否显示提示面板
         self.is_show_kline_tip_pannel = is_show_kline_tip_pannel
+        # 自动适应
         self.autosize = autosize
+        # debug模式
         self.debug = debug
+        self.page = 1
+        # 画图事件集合
+        self.draw_event = draw_event
+        # 头部html
+        self.header_html = header_html
+        # 头部高度
+        self.header_height = header_height
         if(cycle==0):self.chartType = ChartType.timeSharing
         if(cycle==1):self.chartType = ChartType.timeSharing5
         if cycle>=2: self.chartType = ChartType.candle
@@ -280,17 +267,17 @@ class DsxKline:
 
     @staticmethod
     def show(symbol,name=None,cycle = CycleType.t,fq=FqType.default,page_size=320,last_close=0,datas=[],chartType=ChartType.timeSharing,theme=DsxThemeName.dark,main=["MA"],sides=["VOL","MACD","RSI"],
-    enable_data_api=True,height=600,width=800,on_crossing:callable=None,update_complate:callable=None,side_height=80,padding_bottom=10,candel_type=CandleType.hollow,
-    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False):
+    enable_data_api=True,height=600,width=800,on_crossing=None,update_complate=None,side_height=80,padding_bottom=10,candel_type=CandleType.hollow,
+    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False,draw_event:list=None,header_html=None,header_height=0):
         dk = DsxKline(symbol,name,cycle,fq,page_size,last_close,datas,chartType,theme,main,sides,enable_data_api,
-        height,width,on_crossing,update_complate,side_height,padding_bottom,candel_type,zoom_lock_type,is_show_kline_tip_pannel,autosize,debug)
+        height,width,on_crossing,update_complate,side_height,padding_bottom,candel_type,zoom_lock_type,is_show_kline_tip_pannel,autosize,debug,draw_event,header_html,header_height)
         dk.start()
 
 
     def init(self):
         # 初始化
         self.jsapi = Api(self)
-        self.window =  webview.create_window(self.name,background_color=self.background_color(), on_top=True,js_api=self.jsapi,width=self.width,height=self.height+30)
+        self.window =  webview.create_window(self.name,background_color=self.background_color(), on_top=True,js_api=self.jsapi,width=self.width,height=self.height+30+self.header_height)
         #print(window)
         self.window.events.resized += self.on_resized
         self.window.events.maximized += self.on_maximized
@@ -307,7 +294,7 @@ class DsxKline:
         self.update_kline()
         
     def start(self):
-        webview.start(self.load,debug=True)
+        webview.start(self.load,debug=self.debug)
     
     def background_color(self):
         backgroundcolor = ""
@@ -318,11 +305,15 @@ class DsxKline:
         return backgroundcolor
     
     def load_css(self):
-        css = r"""
+        css = """
             body{
                 background-color:{background-color}
             }
-        """
+            #header{
+                height:%spx;
+                overflow:hidden;
+            }
+        """ % self.header_height
         css = css.replace("{background-color}",self.background_color())
         self.window.load_css(css)
         print("load css")
@@ -334,6 +325,7 @@ class DsxKline:
         jscontent = dsxkline_js
         content = content.replace('{jscontent}',jscontent)
         content = content.replace("-background-color-",self.background_color())
+        content = content.replace("{header}",self.header_html)
         self.window.load_html(content)
 
     def load(self):
@@ -346,7 +338,7 @@ class DsxKline:
     def create_kline(self):
         js = r"""
             console.log('加载成功...');
-            console.log(dsxConfig);
+            console.log(dsxKline.version);
             var c=document.getElementById("kline"); 
             var kline = new dsxKline({
                 element:c,
@@ -368,7 +360,7 @@ class DsxKline:
                 // 初始化并开始加载数据
                 onLoading:function(o){
                     //console.log("o.chartType="+o.chartType);
-                    pywebview.api.onLoading(o)
+                    pywebview.api.onLoading(o);
                 },
                 // 滚动到最左边的时候加载下一页数据
                 nextPage:function(data,index){
@@ -376,17 +368,21 @@ class DsxKline:
                     // kline.finishLoading();
                     //console.log("滚动到左边");
                     // 继续加载下一页数据
-                    pywebview.api.next_page(data,index)
+                    pywebview.api.next_page(data,index);
                 },
                 // 十字线滑动数据回调
                 onCrossing:function(data,index){
                     //console.log(index,data);
-                    pywebview.api.on_crossing(data,index)
+                    pywebview.api.on_crossing(data,index);
                 },
                 // 完成一帧数据更新
                 updateComplate:function(){
                     //console.log("完成一帧数据更新");
-                    pywebview.api.update_complate()
+                    pywebview.api.update_complate();
+                },
+                drawEvent:function(self){
+                    //console.log("drawEvent");
+                    {drawEvent}
                 },
                 
             });
@@ -395,6 +391,7 @@ class DsxKline:
         js = self.trans_js(js)
         self.window.evaluate_js(js)
         print("create kline obj")
+        # print(js)
 
     def update_kline(self):
 
@@ -443,6 +440,7 @@ class DsxKline:
         js = js.replace("{paddingBottom}",self.padding_bottom.__str__())
         js = js.replace("{autoSize}",self.autosize.__str__().lower())
         js = js.replace("{debug}", self.debug.__str__().lower())
+        js = js.replace("{drawEvent}", ";".join(self.draw_event))
         # print(js)
         return js
     
@@ -452,10 +450,16 @@ class DsxKline:
             kline.finishLoading();
             """
         self.window.evaluate_js(js)
+        
+    
+    @staticmethod
+    def draw_cycle_with_date(date,text,bgcolor,textcolor,price=0):
+        js = r"""self.drawCycleWithDate("%s","%s","%s","%s",%s)""" % (date,text,bgcolor,textcolor,price)
+        return js
 
 
 if __name__ == "__main__":
-    DsxKline.show("sh000001","上证指数")
+    # DsxKline.show("sh000001","上证指数")
     # DsxKline.show("sh000001","上证指数",CycleType.t5)
     # DsxKline.show("sh000001","上证指数",CycleType.day,FqType.qfq,theme=DsxThemeName.white,sides=["VOL","MACD","KDJ","RSI","WR","CCI","PSY","BIAS"],height=1600)
     # DsxKline.show("sh000001","上证指数",CycleType.week,on_crossing=on_crossing)
@@ -971,5 +975,11 @@ if __name__ == "__main__":
         "20230111,3172.38,3184.76,3160.89,3161.84,237742869.00,30924889.29",
         "20230112,3167.27,3171.59,3153.40,3166.15,167801770,21360740"
     ]
+    
+    def draw_event(self):
+        self.drawCycleWithDate("20230103","买","red","#ffffff")
+        self.drawCycleWithDate("20221129","卖","green","#ffffff",12.99)
+        self.drawCycleWithDate("202303241104","买","red","#ffffff")
 
-    DsxKline.show("sh000001","上证指数",datas=datas,enable_data_api=False,cycle=CycleType.day)
+    DsxKline.show("sh000001","上证指数",datas=datas,enable_data_api=False,cycle=CycleType.day,draw_event=draw_event)
+
