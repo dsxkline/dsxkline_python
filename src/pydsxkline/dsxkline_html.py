@@ -7,6 +7,7 @@ dsxkline_html = r"""
     <title>大师兄K线图</title>
     <style>*{padding:0;margin:0;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}html{overflow:hidden;}body{position:fixed;top:0;left:0;overflow:hidden;width:100%;height:100%;}</style>
     <script id="klinejs">{jscontent}</script>
+    <script>console.log(dsxKline.version)</script>
     <style type="text/css">
       body{
         background-color: -background-color-;
@@ -14,6 +15,9 @@ dsxkline_html = r"""
     </style>
   </head>
   <body>
+       <div id="header">
+       {header}
+       </div>
        <div id="kline" style="display: block;"></div>
   </body>
 </html>
