@@ -13,9 +13,9 @@ if __name__ == "__main__":
 
     def draw_event():
         return [
-        DsxKline.draw_cycle_with_date("20230313","卖","green","#ffffff",3268.7),
-        DsxKline.draw_cycle_with_date("20221230","买","red","#ffffff"),
-        DsxKline.draw_cycle_with_date("202303241104","买","red","#ffffff")
+        DsxKline.draw_circle_with_date("20230313","卖","green","#ffffff",3268.7),
+        DsxKline.draw_circle_with_date("20221230","买","red","#ffffff"),
+        DsxKline.draw_circle_with_date("202303241104","买","red","#ffffff")
         ]
 
     header = """

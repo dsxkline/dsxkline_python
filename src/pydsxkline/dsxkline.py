@@ -453,8 +453,8 @@ class DsxKline:
         
     
     @staticmethod
-    def draw_cycle_with_date(date,text,bgcolor,textcolor,price=0):
-        js = r"""self.drawCycleWithDate("%s","%s","%s","%s",%s)""" % (date,text,bgcolor,textcolor,price)
+    def draw_circle_with_date(date,text,bgcolor,textcolor,price=0):
+        js = r"""self.drawCircleWithDate("%s","%s","%s","%s",%s)""" % (date,text,bgcolor,textcolor,price)
         return js
 
 
