@@ -10,6 +10,7 @@ pydsxkline K线数据图型可视化插件
 """
 import datetime
 import sys
+from typing import List
 import webview
 import json
 from pydsxkline import qqhq as hq
@@ -54,6 +55,15 @@ class ZoomLockType:
 class DsxThemeName:
     white = "white" # 默认
     dark = "dark"   # 暗黑
+
+class DrawModel:
+    def __init__(self,name:str,model:str,color:str) -> None:
+        self.name = name
+        self.model = model
+        self.color = color
+    
+    def __repr__(self) -> str:
+        return "{%s:{model:'%s',color:'%s'}}" % (self.name,self.model,self.color)
 
 class Api:
 
@@ -204,7 +214,7 @@ class DsxKline:
     
     def __init__(self,symbol,name=None,cycle = CycleType.t,fq=FqType.default,page_size=320,last_close=0,datas=[],chartType=ChartType.timeSharing,theme=DsxThemeName.dark,main=["MA"],sides=["VOL","MACD","RSI"]
     ,enable_data_api=True,height=600,width=800,on_crossing=None,update_complate=None,side_height=80,padding_bottom=10,candel_type=CandleType.hollow,
-    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False,draw_event:list=None,header_html=None,header_height=0):
+    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False,draw_event:list=None,header_html="",header_height=0,install_index_js="",create_index_js=""):
         # webview 窗口
         self.window = None
         # k线数据
@@ -260,6 +270,10 @@ class DsxKline:
         self.header_html = header_html
         # 头部高度
         self.header_height = header_height
+        # 安装自定义指标数据
+        self.install_index_js = install_index_js
+        # 创建自定义指标算法js代码
+        self.create_index_js = create_index_js
         if(cycle==0):self.chartType = ChartType.timeSharing
         if(cycle==1):self.chartType = ChartType.timeSharing5
         if cycle>=2: self.chartType = ChartType.candle
@@ -268,9 +282,9 @@ class DsxKline:
     @staticmethod
     def show(symbol,name=None,cycle = CycleType.t,fq=FqType.default,page_size=320,last_close=0,datas=[],chartType=ChartType.timeSharing,theme=DsxThemeName.dark,main=["MA"],sides=["VOL","MACD","RSI"],
     enable_data_api=True,height=600,width=800,on_crossing=None,update_complate=None,side_height=80,padding_bottom=10,candel_type=CandleType.hollow,
-    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False,draw_event:list=None,header_html=None,header_height=0):
+    zoom_lock_type=ZoomLockType.right,is_show_kline_tip_pannel = True,autosize = False,debug = False,draw_event:list=None,header_html="",header_height=0,install_index_js="",create_index_js=""):
         dk = DsxKline(symbol,name,cycle,fq,page_size,last_close,datas,chartType,theme,main,sides,enable_data_api,
-        height,width,on_crossing,update_complate,side_height,padding_bottom,candel_type,zoom_lock_type,is_show_kline_tip_pannel,autosize,debug,draw_event,header_html,header_height)
+        height,width,on_crossing,update_complate,side_height,padding_bottom,candel_type,zoom_lock_type,is_show_kline_tip_pannel,autosize,debug,draw_event,header_html,header_height,install_index_js,create_index_js)
         dk.start()
 
 
@@ -390,10 +404,18 @@ class DsxKline:
         #print(self.chartType.__str__())
         js = self.trans_js(js)
         self.window.evaluate_js(js)
+
+        if self.create_index_js:
+            self.window.evaluate_js(self.create_index_js)
+
         print("create kline obj")
         # print(js)
 
     def update_kline(self):
+
+        if self.install_index_js:
+            result = self.window.evaluate_js(self.install_index_js)
+            print(result)
 
         js = r"""
             kline.update({
@@ -440,7 +462,8 @@ class DsxKline:
         js = js.replace("{paddingBottom}",self.padding_bottom.__str__())
         js = js.replace("{autoSize}",self.autosize.__str__().lower())
         js = js.replace("{debug}", self.debug.__str__().lower())
-        js = js.replace("{drawEvent}", ";".join(self.draw_event))
+        if self.draw_event: js = js.replace("{drawEvent}", ";".join(self.draw_event))
+        else: js = js.replace("{drawEvent}", "")
         # print(js)
         return js
     
@@ -456,6 +479,48 @@ class DsxKline:
     def draw_circle_with_date(date,text,bgcolor,textcolor,price=0):
         js = r"""self.drawCircleWithDate("%s","%s","%s","%s",%s)""" % (date,text,bgcolor,textcolor,price)
         return js
+    
+    @staticmethod
+    def get_install_index_js(name,model:List[DrawModel],chartType:List[ChartType],location:list,datas:list):
+       models = {}
+       for item in model:
+           models[item.name] = {"model":item.model,"color":item.color}
+       js = "kline.installIndex('%s',%s,%s,%s,%s);" % (
+            name,
+            json.dumps(models),
+            json.dumps(datas),
+            json.dumps(chartType),
+            json.dumps(location),
+            
+        )
+    #    print(js)
+       return js
+
+    @staticmethod
+    def get_create_index_js(name,model:List[DrawModel],chartType:List[ChartType],location:list,jsfunc:str):
+        models = {}
+        for item in model:
+            models[item.name] = {"model":item.model,"color":item.color}
+        # 这里写死了js函数声明方式： var _func = function(){};
+        func = jsfunc.split("= function")[0]
+        func = func.split("var")
+        func = func[-1]
+        js = """
+        %s
+        kline.createIndex('%s',%s,%s,%s,%s);
+        """ % (
+            jsfunc,
+            name,
+            json.dumps(models),
+            func,
+            json.dumps(chartType),
+            json.dumps(location),
+            
+        )
+        #    print(js)
+        return js
+
+    
 
 
 if __name__ == "__main__":
