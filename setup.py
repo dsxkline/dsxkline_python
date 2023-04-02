@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name="pydsxkline",  # 包名称
-    version="1.2.0",  # 版本号
+    version="1.2.1",  # 版本号
     author="fangyunsm",  # 作者
     author_email="934476300@qq.com",  # 作者邮箱
     description="pydsxkline是一个有趣的python包，一行代码即可显示K线图，主要应用于股票金融量化领域，当您想要把股票数据图形化的时候，可以试试这个小工具，希望能帮到有需要的朋友。",  # 描述

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pydsxkline
-Version: 1.2.0
+Version: 1.2.1
 Summary: pydsxkline是一个有趣的python包，一行代码即可显示K线图，主要应用于股票金融量化领域，当您想要把股票数据图形化的时候，可以试试这个小工具，希望能帮到有需要的朋友。
 Home-page: https://github.com/dsxkline/dsxkline_python
 Author: fangyunsm
@@ -154,6 +154,109 @@ DsxKline.show("sh000001","上证指数",CycleType.day,header_html=header,header_
 
 <img width="600" alt="image" src="https://user-images.githubusercontent.com/105279193/227477956-1a5ebc76-12de-4937-883a-0131dcc01c86.png">
 
+### 自定义指标数据
+```python
+# 自定义指标数据
+# 这个要准备跟K线数据一一对应的指标数据
+# 指标名称
+name1 = "MYMA"
+def _install_js():
+    # 指标值名称 MA10，line 画折线，颜色 #ff0000
+    _model = [DrawModel("MA10","line","#ff0000")]
+    # 支持蜡烛图
+    _chartType = [ChartType.candle]
+    # 副图 sides 或者主图 main 或者两者
+    _location = ["sides"]
+    # 指标数据
+    _datas = []
+    # 这里模拟计算一个均线指标
+    N = 10
+    # 获取K线数据
+    klines = get_datas()
+    for i in range(len(klines)):
+        if i>=N:
+            amount = 0
+            for j in range(max(0,i-N+1),i+1):
+                subitem = klines[j]
+                subobj = subitem.split(",")
+                close = float(subobj[4])
+                amount += close
+            MA10 = amount / N
+            _datas.append({"MA10":MA10})
+        else:
+            _datas.append({"MA10":None})
+    
+    # 生成js 
+    install_js = DsxKline.get_install_index_js(name1,_model,_chartType,_location,_datas)
+    return install_js
+
+DsxKline.show("sh000001","上证指数",CycleType.day,main=["SAR"],sides=[name1,"VOL","MACD","KDJ"],datas=get_datas(),enable_data_api=False,install_index_js=_install_js())
+```
+
+### 自定义指标算法
+自定义指标算法比较麻烦，因为js引擎只能执行js代码，所以指标算法需要用js代码来写
+```python
+# 自定义指标算法，这个比较麻烦，算法需要用js来写
+name2 = "MYMAMA"
+def _create_index_js():
+    # 指标值名称 MA10，line 画折线，颜色 #ff0000
+    _model = [
+        DrawModel("MA10","line","#ff0000"),
+        DrawModel("MA30","line","#ffff00")
+    ]
+    # 支持蜡烛图
+    _chartType = [ChartType.candle]
+    # 副图 sides 或者主图 main 或者两者
+    _location = ["sides"]
+    # 指标算法帧函数
+    _func = """
+    // 这里写js函数代码
+    var _name2 = "%s";
+    var _func = function(){
+        
+        // 取得当前坐标数据
+        var item = this.datas[this.day];
+        // 初始化指标
+        if (item.ZHIBIAO[_name2] == null)
+            item.ZHIBIAO[_name2] = {
+            };
+        // 开始计算指标值，这里我们计算个均线指标吧
+        var N = 10;
+        if(this.day<N) {
+            item.ZHIBIAO[_name2]["MA10"] = null;
+            item.ZHIBIAO[_name2]["MA30"] = null;
+            return;
+        }
+        var amount = 0;
+        for(var i=Math.max(this.day-N+1,0);i<=this.day;i++){
+            var subitem = this.datas[i];
+            amount += subitem.CLOSE;
+        }
+        var MA10 = amount / N;
+        item.ZHIBIAO[_name2]["MA10"] = MA10;
+        N = 30;
+        if(this.day<N) {
+            item.ZHIBIAO[_name2]["MA30"] = null;
+            return;
+        }
+        amount = 0;
+        for(var i=Math.max(this.day-N+1,0);i<=this.day;i++){
+            var subitem = this.datas[i];
+            // 这里模型数据里有K线所有的字段值可以引用
+            amount += subitem.CLOSE;
+        }
+        var MA30 = amount / N;
+        // 保存指标值
+        item.ZHIBIAO[_name2]["MA30"] = MA30;
+    }
+    """ % name2
+    # 生成js 
+    create_js = DsxKline.get_create_index_js(name2,_model,_chartType,_location,_func)
+    return create_js
+
+DsxKline.show("sh000001","上证指数",CycleType.day,main=["SAR"],sides=[name2,"VOL","MACD","KDJ"],create_index_js=_create_index_js())
+```
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/105279193/229328387-2d3543c3-94e9-4b8a-8bd1-900bc6a30da8.png">
 
 ### 参数属性
 - 详细的文档可参考：http://www.dsxkline.com
@@ -212,4 +315,8 @@ DsxKline.show("sh000001","上证指数",CycleType.day,header_html=header,header_
     header_html = None
     # 头部高度
     header_height = 0
+    # 安装自定义指标数据
+    install_index_js = install_index_js
+    # 创建自定义指标算法js代码
+    create_index_js = create_index_js
 ```
