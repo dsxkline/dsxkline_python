@@ -298,4 +298,8 @@ DsxKline.show("sh000001","上证指数",CycleType.day,main=["SAR"],sides=[name2,
     header_html = None
     # 头部高度
     header_height = 0
+    # 安装自定义指标数据
+    install_index_js = install_index_js
+    # 创建自定义指标算法js代码
+    create_index_js = create_index_js
 ```
