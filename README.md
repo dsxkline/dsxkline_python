@@ -239,6 +239,7 @@ def _create_index_js():
 
 DsxKline.show("sh000001","上证指数",CycleType.day,main=["SAR"],sides=[name2,"VOL","MACD","KDJ"],create_index_js=_create_index_js())
 ```
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/105279193/229328387-2d3543c3-94e9-4b8a-8bd1-900bc6a30da8.png">
 
 ### 参数属性
 - 详细的文档可参考：http://www.dsxkline.com
